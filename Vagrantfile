@@ -7,12 +7,12 @@ Vagrant.configure("2") do |config|
     config.vm.provision "docker" do |dock|
          dock.run "/vagrant", args: "--privileged \
                                         --env=LOCAL_USER_ID=$(id -u) \
-                                        -v /vagrant/src/PX4-Autopilot:/src \
+                                        -v /vagrant/src:/src \
                                         -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
                                         -e DISPLAY=:0 \
                                         -e LOCAL_USER_ID=$(id -u) \
                                         -p 14556:14556/udp \
-                                        -w /src \
+                                        -w /src/PX4-Autopilot \
                                         --name=px4_container px4io/px4-dev-ros2-foxy:latest",
                                 cmd: "make px4_sitl_default",
                                 auto_assign_name: false
