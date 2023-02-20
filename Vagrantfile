@@ -56,7 +56,6 @@ Vagrant.configure("2") do |config|
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
   config.vm.synced_folder "./src", "/src", owner: "vagrant", group: "vagrant", automount: true, mount_options: ["uid=1000", "gid=1000"]
-  config.vm.synced_folder "./app", "/app", owner: "vagrant", group: "vagrant", automount: true, mount_options: ["uid=1000", "gid=1000"]
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -80,14 +79,16 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
     cd /vagrant && docker build -t app .
+    chmod +x /vagrant/src/app/app.py
+    cd /vagrant/src/PX4-Autopilot && make clean && make submodulesclean
     docker run -t --rm\
         --env=LOCAL_USER_ID="$(id -u)" \
-        -v /src:/app:rw \
+        -v /vagrant:/vagrant:rw \
         -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
         -e DISPLAY=:0 \
         -e LOCAL_USER_ID="$(id -u)" \
         -p 14556:14556/udp \
-        -w /app \
-        --name=app app ./OpenCVCode/app.py
+        -w /vagrant/src/PX4-Autopilot \
+        --name=px4 app make px4_sitl_default
   SHELL
 end

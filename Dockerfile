@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM px4io/px4-dev-ros2-foxy:latest
 
 ENV TERM=xterm
 ENV DEBIAN_FRONTEND=noninteractive
@@ -10,9 +10,7 @@ RUN echo 'Acquire::Check-Date false;' | tee -a /etc/apt/apt.conf.d/10-nocheckval
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-WORKDIR /app
+WORKDIR /src/app
 
 ENV PYTHONUNBUFFERED=1
-ENV PYTHONPATH=/app
-
-FROM px4io/px4-dev-ros2-foxy:latest
+ENV PYTHONPATH=/src/app
