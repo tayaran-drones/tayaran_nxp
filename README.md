@@ -1,9 +1,10 @@
 # tayaran_nxp
 
-## 1 Update PX4
+## 1 Update PX4 - v1.13.2
 
 `
-rm -rf /src/PX4-Authopilot && rm -rf build
+cd /src/PX4-Authopilot && rm -rf build
+git checkout v1.13.2
 make submodulesclean
 make distclean
 git submodule sync --recursive
