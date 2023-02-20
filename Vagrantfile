@@ -1,6 +1,16 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+system("
+    if [ #{ARGV[0]} = 'up' ]; then
+        echo 'You are doing vagrant up and can execute your script'
+        cd src/PX4-Autopilot
+        rm -rf build
+        make clean && make submodulesclean
+        git submodule sync --recursive
+        git submodule update --recursive
+    fi
+")
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
@@ -12,7 +22,7 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "hashicorp/bionic64"
+  config.vm.box = "ubuntu/focal64"
   config.vm.provision "shell", inline: "echo 'Acquire::Check-Date false;' | tee -a /etc/apt/apt.conf.d/10-nocheckvalid"
   config.vm.provision "docker" do |d|
     #d.build_image "/vagrant"
@@ -65,7 +75,7 @@ Vagrant.configure("2") do |config|
   #   # Display the VirtualBox GUI when booting the machine
     vb.gui = true
   #   # Customize the amount of memory on the VM:
-     vb.memory = "1024"
+     vb.memory = "2048"
      vb.cpus = "2"
   # Enable symlink support (tested but not working at all) workaround is in the README.md
   #   vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/src", "1"]
@@ -80,13 +90,12 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", inline: <<-SHELL
     cd /vagrant && docker build -t app .
     chmod +x /vagrant/src/app/app.py
-    cd /vagrant/src/PX4-Autopilot && make clean && make submodulesclean
-    docker run -t --rm\
-        --env=LOCAL_USER_ID="$(id -u)" \
+    docker run \
+        --env=LOCAL_USER_ID=`$(id -u)` \
         -v /vagrant:/vagrant:rw \
         -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
         -e DISPLAY=:0 \
-        -e LOCAL_USER_ID="$(id -u)" \
+        -e LOCAL_USER_ID=`$(id -u)` \
         -p 14556:14556/udp \
         -w /vagrant/src/PX4-Autopilot \
         --name=px4 app make px4_sitl_default
