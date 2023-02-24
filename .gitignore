@@ -1,3 +1,4 @@
 .vagrant
 .idea
 /ubuntu-bionic-18.04-cloudimg-console.log
+src/PX4-Autopilot

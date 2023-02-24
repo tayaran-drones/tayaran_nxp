@@ -22,7 +22,7 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "ubuntu/focal64"
+  config.vm.box = "hashicorp/bionic64"
   config.vm.provision "shell", inline: "echo 'Acquire::Check-Date false;' | tee -a /etc/apt/apt.conf.d/10-nocheckvalid"
   config.vm.provision "docker" do |d|
     #d.build_image "/vagrant"
@@ -78,7 +78,7 @@ Vagrant.configure("2") do |config|
      vb.memory = "2048"
      vb.cpus = "4"
   # Enable symlink support (tested but not working at all) workaround is in the README.md
-  #   vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/src", "1"]
+     vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/vagrant", "1"]
    end
   #
   # View the documentation for the provider you are using for more
@@ -87,22 +87,57 @@ Vagrant.configure("2") do |config|
   # Enable provisioning with a shell script. Additional provisioners such as
   # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
   # documentation for more information about their specific syntax and use.
-  config.vm.provision "shell", inline: <<-SHELL
+
+  config.vm.provision "shell", privileged: true, inline: <<-SHELL
+    apt-get install -y ubuntu-desktop
+    usermod -aG docker vagrant
+    sed -i 's/#  Automatic/Automatic/g' /etc/gdm3/custom.conf
+    sed -i 's/user1/vagrant/g' /etc/gdm3/custom.conf
+    echo "X-GNOME-Autostart-enabled=false" > /etc/xdg/autostart/gnome-initial-setup-first-login.desktop
+    systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
+    if pgrep -x gdm3 >/dev/null; then
+    echo "GDM is already running!"
+    else
+    echo "GDM is not running restarting..."
+    systemctl restart gdm3
+    fi
+  SHELL
+
+
+  # launch docker and redirect display to VM
+  $unprivileged = <<-SCRIPT
+    DISPLAY=:0 gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-timeout 0
+    DISPLAY=:0 gsettings set org.gnome.desktop.session idle-delay 0
+    DISPLAY=:0 gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
+    DISPLAY=:0 gsettings set org.gnome.desktop.screensaver ubuntu-lock-on-suspend false
+    DISPLAY=:0 gsettings set org.gnome.desktop.lockdown disable-lock-screen true
+    DISPLAY=:0 gsettings set org.gnome.desktop.screensaver lock-enabled false
+    run=`docker container inspect -f '{{.State.Running}}' px4`
+    if [ "$run" == "true" ]; then
+      echo "Docker already running!!!"
+      docker stop px4
+      echo "Docker stopped.."
+    fi
+    if docker ps -aq -f status=exited -f name=px4; then
+      echo "Removing docker container.."
+      docker container rm px4 -f
+    fi
+    echo "Building docker container.."
     cd /vagrant && docker build -t px4_app .
-    sudo apt restart
-    chmod +x /vagrant/src/app/app.py
-    docker container rm px4 -f
-    docker run -d --privileged \
-        --env=LOCAL_USER_ID=`$(id -u)` \
+    echo "Starting docker container.."
+    docker run -d\
+        --env=LOCAL_USER_ID="$(id -u)" \
         -v /vagrant:/vagrant:rw \
         -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
         -e DISPLAY=:0 \
-        -e LOCAL_USER_ID=`$(id -u)` \
+        -e LOCAL_USER_ID="$(id -u)" \
         -p 14556:14556/udp \
         -w /vagrant/src/PX4-Autopilot \
-        --name=px4 px4_app \
-        sleep infinity
+        --name=px4 px4_app sleep infinity
+    DISPLAY=:0 xhost +local:
     docker exec px4 make px4_sitl_default
+    # users logged via ssh can use command: docker exec px4 gazebo ...
+  SCRIPT
+  config.vm.provision "shell", inline: $unprivileged, privileged: false
 
-  SHELL
 end
