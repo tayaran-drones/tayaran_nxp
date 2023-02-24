@@ -99,8 +99,9 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", privileged: true, inline: <<-SHELL
     apt-get install -y dkms
     apt-get upgrade -y
-    apt-get install -y ubuntu-desktop nux-tools
+    apt-get install -y ubuntu-desktop gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl libqt5gui5 libfuse2 libsdl2-2.0-0
     usermod -aG docker vagrant
+    usermod -aG dialout vagrant
     sed -i 's/#  Automatic/Automatic/g' /etc/gdm3/custom.conf
     sed -i 's/user1/vagrant/g' /etc/gdm3/custom.conf
     echo "X-GNOME-Autostart-enabled=false" > /etc/xdg/autostart/gnome-initial-setup-first-login.desktop
@@ -110,8 +111,15 @@ Vagrant.configure("2") do |config|
        echo "xhost + > /dev/null" >> /home/vagrant/.bashrc
     fi
     systemctl disable apport
-    apt-get remove --purge -y apport whoopsie
+    # remove unecessary packages
+    apt-get remove --purge -y apport whoopsie modemmanager
     rm /var/crash/*
+    if ! [ -e "/home/vagrant/QGroundControl.AppImage" ]; then
+      echo "QGroundControl was not found, downloading..."
+      wget https://d176tv9ibo4jno.cloudfront.net/latest/QGroundControl.AppImage -O /home/vagrant/QGroundControl.AppImage
+      chown vagrant:vagrant /home/vagrant/QGroundControl.AppImage
+      chmod +x /home/vagrant/QGroundControl.AppImage
+    fi
   SHELL
 
   config.vm.provision :shell do |shell|

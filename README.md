@@ -23,3 +23,10 @@ Go inside docker container using `docker attach px4` and run
 vagrant ssh
 docker exec -it px4 make px4_sitl_default gazebo
 ```
+
+## QGroundControl
+
+```
+vagrant ssh
+./QGroundControl.AppImage
+```
