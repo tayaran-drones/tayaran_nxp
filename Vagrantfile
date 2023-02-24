@@ -65,7 +65,7 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  config.vm.synced_folder "./src", "/src", owner: "vagrant", group: "vagrant", automount: true, mount_options: ["uid=1000", "gid=1000"]
+  config.vm.synced_folder "./src", "/src", owner: "vagrant", group: "vagrant", automount: true, mount_options: ["uid=1000", "gid=1000","dmode=775","fmode=664"]
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -75,7 +75,7 @@ Vagrant.configure("2") do |config|
   #   # Display the VirtualBox GUI when booting the machine
     vb.gui = true
   #   # Customize the amount of memory on the VM:
-     vb.memory = "2048"
+     vb.memory = "4096"
      vb.cpus = "4"
   # Enable symlink support (tested but not working at all) workaround is in the README.md
      vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/vagrant", "1"]
