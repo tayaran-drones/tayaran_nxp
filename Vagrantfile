@@ -149,14 +149,15 @@ Vagrant.configure("2") do |config|
     fi
     echo "Building docker container.."
     cd /vagrant && docker build -t px4_app .
+    chmod +x /vagrant/src/app/app.py
     echo "Starting docker container.."
     docker run -d\
         --restart=always \
-        --env=LOCAL_USER_ID="$(id -u)" \
+        --env=LOCAL_USER_ID=`$(id -u)` \
         -v /vagrant:/vagrant:rw \
         -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
         -e DISPLAY=:0 \
-        -e LOCAL_USER_ID="$(id -u)" \
+        -e LOCAL_USER_ID=`$(id -u)` \
         -p 14556:14556/udp \
         -w /vagrant/src/PX4-Autopilot \
         --name=px4 px4_app sleep infinity

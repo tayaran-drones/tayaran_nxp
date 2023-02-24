@@ -1,8 +1,8 @@
 # tayaran_nxp
 
-## 1 Update PX4 - v1.13.2
+## 1 Get laest version of PX$
 
-`git checkout v1.13.2`
+`cd src/PX4-AutoPilot && git checkout main`
 
 ## 2 Run Vagrant Up
 `vagrant up`
@@ -18,7 +18,6 @@ Go inside docker container using `docker attach px4` and run
 `make px4_sitl gazebo_solo` for Quadrotor
 
 ## Testing
-
 ```
 vagrant ssh
 docker exec -it px4 make px4_sitl_default gazebo
@@ -30,3 +29,11 @@ docker exec -it px4 make px4_sitl_default gazebo
 vagrant ssh
 ./QGroundControl.AppImage
 ```
+=======
+## ROS2 Integration
+Go inside docker container using `docker exec -it px4 bash`, navigate to parent directory using `cd ../..` and run
+```
+source /opt/ros/foxy/setup.bash
+colcon build
+```
+
