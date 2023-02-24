@@ -23,6 +23,7 @@ Vagrant.configure("2") do |config|
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
   config.vm.box = "hashicorp/bionic64"
+  config.vbguest.auto_update = false if Vagrant.has_plugin?("vagrant-vbguest")
   config.vm.provision "shell", inline: "echo 'Acquire::Check-Date false;' | tee -a /etc/apt/apt.conf.d/10-nocheckvalid"
   config.vm.provision "docker" do |d|
     #d.build_image "/vagrant"
@@ -79,6 +80,13 @@ Vagrant.configure("2") do |config|
      vb.cpus = "4"
   # Enable symlink support (tested but not working at all) workaround is in the README.md
      vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/vagrant", "1"]
+     vb.customize ["setextradata", :id, "GUI\/LastGuestSizeHint","1440,900"]
+  # 3d acceleration
+     vb.customize ["modifyvm", :id, "--accelerate3d","on"]
+     #vb.customize ["modifyvm", :id, "--graphicscontroller","vmsvga"] # there is bug using this, as some display artifacts accurs
+     vb.customize ["modifyvm", :id, "--hwvirtex","on"]
+     vb.customize ["modifyvm", :id, "--ioapic","on"]
+     vb.customize ["modifyvm", :id, "--vram","128"]
    end
   #
   # View the documentation for the provider you are using for more
@@ -89,19 +97,28 @@ Vagrant.configure("2") do |config|
   # documentation for more information about their specific syntax and use.
 
   config.vm.provision "shell", privileged: true, inline: <<-SHELL
-    apt-get install -y ubuntu-desktop
+    apt-get install -y dkms
+    apt-get upgrade -y
+    apt-get install -y ubuntu-desktop nux-tools
     usermod -aG docker vagrant
     sed -i 's/#  Automatic/Automatic/g' /etc/gdm3/custom.conf
     sed -i 's/user1/vagrant/g' /etc/gdm3/custom.conf
     echo "X-GNOME-Autostart-enabled=false" > /etc/xdg/autostart/gnome-initial-setup-first-login.desktop
     systemctl mask sleep.target suspend.target hibernate.target hybrid-sleep.target
-    if pgrep -x gdm3 >/dev/null; then
-    echo "GDM is already running!"
-    else
-    echo "GDM is not running restarting..."
-    systemctl restart gdm3
+    echo "export DISPLAY=:0" > /etc/profile.d/globals.sh
+    if ! grep -q xhost /home/vagrant/.bashrc; then
+       echo "xhost + > /dev/null" >> /home/vagrant/.bashrc
     fi
+    systemctl disable apport
+    apt-get remove --purge -y apport whoopsie
+    rm /var/crash/*
   SHELL
+
+  config.vm.provision :shell do |shell|
+    shell.privileged = true
+    shell.inline = "echo Rebooting"
+    shell.reboot = true
+  end
 
 
   # launch docker and redirect display to VM
@@ -126,6 +143,7 @@ Vagrant.configure("2") do |config|
     cd /vagrant && docker build -t px4_app .
     echo "Starting docker container.."
     docker run -d\
+        --restart=always \
         --env=LOCAL_USER_ID="$(id -u)" \
         -v /vagrant:/vagrant:rw \
         -v /tmp/.X11-unix:/tmp/.X11-unix:ro \

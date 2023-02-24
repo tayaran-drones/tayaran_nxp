@@ -16,3 +16,10 @@
 
 Go inside docker container using `docker attach px4` and run
 `make px4_sitl gazebo_solo` for Quadrotor
+
+## Testing
+
+```
+vagrant ssh
+docker exec -it px4 make px4_sitl_default gazebo
+```
