@@ -130,7 +130,8 @@ Vagrant.configure("2") do |config|
 
 
   # launch docker and redirect display to VM
-  $unprivileged = <<-SCRIPT
+  #$unprivileged = <<-SCRIPT
+  config.vm.provision "shell", privileged: false, inline: <<-'SHELL'
     DISPLAY=:0 gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-battery-timeout 0
     DISPLAY=:0 gsettings set org.gnome.desktop.session idle-delay 0
     DISPLAY=:0 gsettings set org.gnome.settings-daemon.plugins.power sleep-inactive-ac-timeout 0
@@ -139,12 +140,12 @@ Vagrant.configure("2") do |config|
     DISPLAY=:0 gsettings set org.gnome.desktop.screensaver lock-enabled false
     run=`docker container inspect -f '{{.State.Running}}' px4`
     if [ "$run" == "true" ]; then
-      echo "Docker already running!!! \n"
+      echo "Docker already running!!!"
       docker stop px4
       echo "Docker stopped.."
     fi
     if docker ps -aq -f status=exited -f name=px4; then
-      echo "Removing docker container.. \n"
+      echo "Removing docker container.."
       docker container rm px4 -f
     fi
     echo "Building docker container.."
@@ -158,14 +159,39 @@ Vagrant.configure("2") do |config|
         -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
         -e DISPLAY=:0 \
         -e LOCAL_USER_ID="$(id -u)" \
-        -p 14550:14550/udp \
         -w /vagrant/src/PX4-Autopilot \
         --name=px4 px4_app sleep infinity
     DISPLAY=:0 xhost +local:
     docker exec -w /vagrant/src/PX4-Autopilot px4 make px4_sitl_default
     # docker exec -w /vagrant/src px4 .~/opt/ros/foxy/setup.bash && colcon build
     # users logged via ssh can use command: docker exec px4 gazebo ...
-  SCRIPT
-  config.vm.provision "shell", inline: $unprivileged, privileged: false
-
+    # write exact ip address of the docker to the QGC config
+    if ! [ -d /home/vagrant/.config/QGroundControl.org ]; then
+       echo "QGC Config dir was not found, creating..."
+       mkdir /home/vagrant/.config/QGroundControl.org
+    fi 
+    # retrieve docker ip
+    echo "Retrieving docker ip..."
+    DOCKER_IP=$(docker inspect -f '{{range.NetworkSettings.Networks}}{{.IPAddress}}{{end}}' px4)
+    echo "Docker ip: $DOCKER_IP"
+    if [ -e /home/vagrant/.config/QGroundControl.org/QGroundControl.ini ]; then
+    # delete current LinkConfiguration definitions
+       echo "QGC configuration was found, altering configuration..."
+       sed -i '/^\[LinkConfigurations\]/,/^$/d' /home/vagrant/.config/QGroundControl.org/QGroundControl.ini
+    fi
+    # add new LinkConfiguration definitions
+    echo "Configuring QGC Links..."
+    cat >> /home/vagrant/.config/QGroundControl.org/QGroundControl.ini <<EOF
+[LinkConfigurations]
+Link0\auto=true
+Link0\high_latency=false
+Link0\host0=$DOCKER_IP
+Link0\hostCount=1
+Link0\name=gazebo
+Link0\port=18570
+Link0\port0=18570
+Link0\type=1
+count=1
+EOF
+  SHELL
 end
