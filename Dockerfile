@@ -13,9 +13,12 @@ RUN echo 'Acquire::Check-Date false;' | tee -a /etc/apt/apt.conf.d/10-nocheckval
     build-essential \
     iproute2 \
     && apt-get clean \
-    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/* \
+    && echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc
 
 WORKDIR /src/app
 
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH=/src/app
+
+SHELL ["/bin/bash", "-c"]
