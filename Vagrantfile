@@ -1,12 +1,12 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+#When there is an error - use this command to clean the environment
+#make clean && make submodulesclean
 system("
     if [ #{ARGV[0]} = 'up' ]; then
         echo 'You are doing vagrant up and can execute your script'
         cd src/PX4-Autopilot
-        rm -rf build
-        make clean && make submodulesclean
         git submodule sync --recursive
         git submodule update --recursive
     fi
@@ -76,7 +76,7 @@ Vagrant.configure("2") do |config|
     vb.gui = true
   #   # Customize the amount of memory on the VM:
      vb.memory = "2048"
-     vb.cpus = "2"
+     vb.cpus = "4"
   # Enable symlink support (tested but not working at all) workaround is in the README.md
   #   vb.customize ["setextradata", :id, "VBoxInternal2/SharedFoldersEnableSymlinksCreate/src", "1"]
    end
@@ -88,9 +88,11 @@ Vagrant.configure("2") do |config|
   # Ansible, Chef, Docker, Puppet and Salt are also available. Please see the
   # documentation for more information about their specific syntax and use.
   config.vm.provision "shell", inline: <<-SHELL
-    cd /vagrant && docker build -t app .
+    cd /vagrant && docker build -t px4_app .
+    sudo apt restart
     chmod +x /vagrant/src/app/app.py
-    docker run \
+    docker container rm px4 -f
+    docker run -d --privileged \
         --env=LOCAL_USER_ID=`$(id -u)` \
         -v /vagrant:/vagrant:rw \
         -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
@@ -98,6 +100,9 @@ Vagrant.configure("2") do |config|
         -e LOCAL_USER_ID=`$(id -u)` \
         -p 14556:14556/udp \
         -w /vagrant/src/PX4-Autopilot \
-        --name=px4 app make px4_sitl_default
+        --name=px4 px4_app \
+        sleep infinity
+    docker exec px4 make px4_sitl_default
+
   SHELL
 end
