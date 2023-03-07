@@ -1,8 +1,8 @@
 # tayaran_nxp
 
-## 1 Update PX4 - v1.13.2
+## 1 Get laest version of PX$
 
-`git checkout v1.13.2`
+`cd src/PX4-AutoPilot && git checkout main`
 
 ## 2 Run Vagrant Up
 `vagrant up`

@@ -8,6 +8,7 @@ RUN echo 'Acquire::Check-Date false;' | tee -a /etc/apt/apt.conf.d/10-nocheckval
     libopencv-dev \
     python3-opencv \
     xmlstarlet \
+    build-essential\
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
