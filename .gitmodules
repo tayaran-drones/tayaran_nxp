@@ -1,3 +1,8 @@
 [submodule "src/PX4-Autopilot"]
-	path = src/PX4-Autopilot
-	url = https://github.com/PX4/PX4-Autopilot
+path = src/PX4-Autopilot
+url = https://github.com/PX4/PX4-Autopilot
+
+[submodule "src/Micro-XRCE-DDS-Agent"]
+path = src/Micro-XRCE-DDS-Agent
+url = clone https://github.com/eProsima/Micro-XRCE-DDS-Agent.git
+
