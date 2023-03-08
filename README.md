@@ -18,8 +18,15 @@ Go inside docker container using `docker attach px4` and run
 `make px4_sitl gazebo_solo` for Quadrotor
 
 ## Testing
-
 ```
 vagrant ssh
 docker exec -it px4 make px4_sitl_default gazebo
 ```
+
+## ROS2 Integration
+Go inside docker container using `docker exec -it px4 bash`, navigate to parent directory using `cd ../..` and run
+```
+source /opt/ros/foxy/setup.bash
+colcon build
+```
+
