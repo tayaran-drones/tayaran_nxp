@@ -139,12 +139,12 @@ Vagrant.configure("2") do |config|
     DISPLAY=:0 gsettings set org.gnome.desktop.screensaver lock-enabled false
     run=`docker container inspect -f '{{.State.Running}}' px4`
     if [ "$run" == "true" ]; then
-      echo "Docker already running!!!"
+      echo "Docker already running!!! \n"
       docker stop px4
       echo "Docker stopped.."
     fi
     if docker ps -aq -f status=exited -f name=px4; then
-      echo "Removing docker container.."
+      echo "Removing docker container.. \n"
       docker container rm px4 -f
     fi
     echo "Building docker container.."
@@ -153,16 +153,17 @@ Vagrant.configure("2") do |config|
     echo "Starting docker container.."
     docker run -d\
         --restart=always \
-        --env=LOCAL_USER_ID=`$(id -u)` \
+        --env=LOCAL_USER_ID="$(id -u)" \
         -v /vagrant:/vagrant:rw \
         -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
         -e DISPLAY=:0 \
-        -e LOCAL_USER_ID=`$(id -u)` \
-        -p 14556:14556/udp \
+        -e LOCAL_USER_ID="$(id -u)" \
+        -p 14550:14550/udp \
         -w /vagrant/src/PX4-Autopilot \
         --name=px4 px4_app sleep infinity
     DISPLAY=:0 xhost +local:
-    docker exec px4 make px4_sitl_default
+    docker exec -w /vagrant/src/PX4-Autopilot px4 make px4_sitl_default
+    # docker exec -w /vagrant/src px4 .~/opt/ros/foxy/setup.bash && colcon build
     # users logged via ssh can use command: docker exec px4 gazebo ...
   SCRIPT
   config.vm.provision "shell", inline: $unprivileged, privileged: false
