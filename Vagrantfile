@@ -3,14 +3,18 @@
 
 #When there is an error - use this command to clean the environment
 #make clean && make submodulesclean
-system("
-    if [ #{ARGV[0]} = 'up' ]; then
-        echo 'You are doing vagrant up and can execute your script'
-        cd src/PX4-Autopilot
-        git submodule sync --recursive
-        git submodule update --recursive
-    fi
-")
+#system("
+#    if [ #{ARGV[0]} = 'up' ]; then
+#        echo 'Updating git submodules...'
+#        git submodule sync --recursive
+#        git submodule update --recursive
+#        #cd src/PX4-Autopilot
+#        #git submodule sync --recursive
+#        #git submodule update --recursive
+#    fi
+#")
+
+
 # All Vagrant configuration is done below. The "2" in Vagrant.configure
 # configures the configuration version (we support older styles for
 # backwards compatibility). Please don't change it unless you know what
@@ -19,6 +23,11 @@ Vagrant.configure("2") do |config|
   # The most common configuration options are documented and commented below.
   # For a complete reference, please see the online documentation at
   # https://docs.vagrantup.com.
+  # It's possible to make git modules update on local machine before "up" 
+  #config.trigger.before [:up] do |trigger|
+  #  trigger.info = "Updating git submodules..."
+  #  trigger.run = {path: "git submodule sync --recursive"}
+  #end
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
@@ -99,7 +108,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", privileged: true, inline: <<-SHELL
     apt-get install -y dkms
     apt-get upgrade -y
-    apt-get install -y ubuntu-desktop gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl libqt5gui5 libfuse2 libsdl2-2.0-0
+    apt-get install -y git ubuntu-desktop gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl libqt5gui5 libfuse2 libsdl2-2.0-0
     usermod -aG docker vagrant
     usermod -aG dialout vagrant
     sed -i 's/#  Automatic/Automatic/g' /etc/gdm3/custom.conf
@@ -128,7 +137,6 @@ Vagrant.configure("2") do |config|
     shell.reboot = true
   end
 
-
   # launch docker and redirect display to VM
   #$unprivileged = <<-SCRIPT
   config.vm.provision "shell", privileged: false, inline: <<-'SHELL'
@@ -138,6 +146,13 @@ Vagrant.configure("2") do |config|
     DISPLAY=:0 gsettings set org.gnome.desktop.screensaver ubuntu-lock-on-suspend false
     DISPLAY=:0 gsettings set org.gnome.desktop.lockdown disable-lock-screen true
     DISPLAY=:0 gsettings set org.gnome.desktop.screensaver lock-enabled false
+    # update git
+    echo "Updating git modules..."
+    cd /vagrant
+    git submodule sync --recursive
+    git submodule update --recursive
+    # git submodule update --init --recursive
+    echo "git is up to date"
     run=`docker container inspect -f '{{.State.Running}}' px4`
     if [ "$run" == "true" ]; then
       echo "Docker already running!!!"
