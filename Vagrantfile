@@ -150,8 +150,8 @@ Vagrant.configure("2") do |config|
     echo "Updating git modules..."
     cd /vagrant
     git submodule sync --recursive
+    git submodule update --init --recursive
     git submodule update --recursive
-    # git submodule update --init --recursive
     echo "git is up to date"
     run=`docker container inspect -f '{{.State.Running}}' px4`
     if [ "$run" == "true" ]; then
