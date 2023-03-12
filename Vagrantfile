@@ -154,7 +154,9 @@ Vagrant.configure("2") do |config|
     git submodule update --recursive
     echo "git is up to date"
     # Avoid the "has modification time x.x s in the future. Clock skew detected.  Your build may be incomplete." errors
-    find /vagrant/src -type -f -exec touch {} +
+    echo "Files timestamp fix..."
+    find /vagrant/src -type f -exec touch {} +
+    echo "Files timestamp fix done."
     run=`docker container inspect -f '{{.State.Running}}' px4`
     if [ "$run" == "true" ]; then
       echo "Docker already running!!!"
