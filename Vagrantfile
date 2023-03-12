@@ -108,7 +108,7 @@ Vagrant.configure("2") do |config|
   config.vm.provision "shell", privileged: true, inline: <<-SHELL
     apt-get install -y dkms
     apt-get upgrade -y
-    apt-get install -y git ubuntu-desktop gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl libqt5gui5 libfuse2 libsdl2-2.0-0
+    apt-get install -y git ubuntu-desktop gstreamer1.0-plugins-bad gstreamer1.0-libav gstreamer1.0-gl libqt5gui5 libfuse2 libsdl2-2.0-0 ntpdate
     usermod -aG docker vagrant
     usermod -aG dialout vagrant
     sed -i 's/#  Automatic/Automatic/g' /etc/gdm3/custom.conf
@@ -153,6 +153,8 @@ Vagrant.configure("2") do |config|
     git submodule update --init --recursive
     git submodule update --recursive
     echo "git is up to date"
+    # Avoid the "has modification time x.x s in the future. Clock skew detected.  Your build may be incomplete." errors
+    find /vagrant/src -type -f -exec touch {} +
     run=`docker container inspect -f '{{.State.Running}}' px4`
     if [ "$run" == "true" ]; then
       echo "Docker already running!!!"
@@ -178,6 +180,7 @@ Vagrant.configure("2") do |config|
         --name=px4 px4_app sleep infinity
     DISPLAY=:0 xhost +local:
     docker exec -w /vagrant/src/PX4-Autopilot px4 make px4_sitl_default
+    docker exec -w /vagrant/src px4 colcon build
     # docker exec -w /vagrant/src px4 .~/opt/ros/foxy/setup.bash && colcon build
     # users logged via ssh can use command: docker exec px4 gazebo ...
     # write exact ip address of the docker to the QGC config
