@@ -16,6 +16,8 @@ RUN echo 'Acquire::Check-Date false;' | tee -a /etc/apt/apt.conf.d/10-nocheckval
 
 WORKDIR /src/app
 
+COPY enter /enter
+
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONPATH="/opt/ros/foxy/lib/python3.8/site-packages:/src/app"
 ENV AMENT_PREFIX_PATH=/opt/ros/foxy

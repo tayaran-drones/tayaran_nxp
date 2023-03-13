@@ -75,7 +75,7 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  config.vm.synced_folder "./src", "/src", owner: "vagrant", group: "vagrant", automount: true, mount_options: ["uid=1000", "gid=1000","dmode=775","fmode=664"]
+  config.vm.synced_folder ".", "/vagrant", owner: "vagrant", group: "vagrant", automount: true, mount_options: ["uid=1000", "gid=1000","dmode=775","fmode=775"]
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -129,6 +129,7 @@ Vagrant.configure("2") do |config|
       chown vagrant:vagrant /home/vagrant/QGroundControl.AppImage
       chmod +x /home/vagrant/QGroundControl.AppImage
     fi
+    sudo ntpdate pool.ntp.org
   SHELL
 
   config.vm.provision :shell do |shell|
@@ -149,14 +150,14 @@ Vagrant.configure("2") do |config|
     # update git
     echo "Updating git modules..."
     cd /vagrant
-    git submodule sync --recursive
+    #git submodule sync --recursive
     git submodule update --init --recursive
     git submodule update --recursive
     echo "git is up to date"
     # Avoid the "has modification time x.x s in the future. Clock skew detected.  Your build may be incomplete." errors
-    echo "Files timestamp fix..."
-    find /vagrant/src -type f -exec touch {} +
-    echo "Files timestamp fix done."
+    #echo "Files timestamp fix..."
+    #find /vagrant/src -type f -exec touch {} +
+    #echo "Files timestamp fix done."
     run=`docker container inspect -f '{{.State.Running}}' px4`
     if [ "$run" == "true" ]; then
       echo "Docker already running!!!"
@@ -182,7 +183,7 @@ Vagrant.configure("2") do |config|
         --name=px4 px4_app sleep infinity
     DISPLAY=:0 xhost +local:
     docker exec -w /vagrant/src/PX4-Autopilot px4 make px4_sitl_default
-    docker exec -w /vagrant/src px4 colcon build
+    docker exec -w /vagrant/src px4 /enter colcon build
     # docker exec -w /vagrant/src px4 .~/opt/ros/foxy/setup.bash && colcon build
     # users logged via ssh can use command: docker exec px4 gazebo ...
     # write exact ip address of the docker to the QGC config

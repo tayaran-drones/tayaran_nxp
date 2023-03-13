@@ -1,0 +1,12 @@
+#!/bin/bash
+# Initializes environment variables for docker and executes the wanted command.
+
+# fix UserWarning: Usage of dash-separated
+if [ -e /vagrant/src/offboard_ws/src/src/px4-offboard/setup.cfg ]; then
+  sed -i 's/script-dir/script_dir/g' /vagrant/src/offboard_ws/src/src/px4-offboard/setup.cfg
+  sed -i 's/install-scripts/install_scripts/g' /vagrant/src/offboard_ws/src/src/px4-offboard/setup.cfg
+fi
+
+source /opt/ros/foxy/setup.bash
+
+"$@"
