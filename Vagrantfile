@@ -96,7 +96,23 @@ Vagrant.configure("2") do |config|
      vb.customize ["modifyvm", :id, "--hwvirtex","on"]
      vb.customize ["modifyvm", :id, "--ioapic","on"]
      vb.customize ["modifyvm", :id, "--vram","128"]
+  # Enable USB support
+     vb.customize ["modifyvm", :id, "--usb", "on"]
+     vb.customize ["modifyvm", :id, "--usbehci", "on"] # for USB 2.0
+#     vb.customize ["modifyvm", :id, "--usbxhci", "on"] # for USB 3.0
+# Add the desired usb device, look at usb.md
+#     vb.customize ["usbfilter", "add", "0",
+#       "--target", :id,
+#       "--name", "usbstick",
+#       "--vendorid", "8644",
+#       "--productid", "800B",
+#       "--product", "USB Flash Disk",
+#       "--manufacturer","General"]
+# Attach the desired usb device on the VM startup, look at usb.md
+#     vb.customize "post-boot", ["controlvm", :id, "usbattach", "p=0x800b;v=0x8644;s=0x00038015f557c434;l=0x14130000"]
    end
+
+
   #
   # View the documentation for the provider you are using for more
   # information on available options.
@@ -130,7 +146,20 @@ Vagrant.configure("2") do |config|
       chmod +x /home/vagrant/QGroundControl.AppImage
     fi
     sudo ntpdate pool.ntp.org
+    echo "*/5 * * * * root ntpdate pool.ntp.org >> /dev/null 2>&1" > /etc/cron.d/timefix
   SHELL
+
+  # time zone autodetection
+  Vagrant.configure("2") do |config|
+    require "time"
+    offset = ((Time.zone_offset(Time.now.zone) / 60) / 60) + (Time.now.dst? ? 1 : 0)
+    timezone_suffix = offset >= 0 ? "-#{offset.to_s}" : "+#{offset.to_s}"
+    timezone = 'Etc/GMT' + timezone_suffix
+    config.vm.provision :shell, privileged: true, inline: <<-'SHELL'
+      ln -fs /usr/share/zoneinfo/#{timezone} /etc/localtime
+      dpkg-reconfigure -f noninteractive tzdata
+    SHELL
+  end
 
   config.vm.provision :shell do |shell|
     shell.privileged = true
