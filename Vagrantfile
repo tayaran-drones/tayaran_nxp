@@ -109,7 +109,8 @@ Vagrant.configure("2") do |config|
 #       "--product", "USB Flash Disk",
 #       "--manufacturer","General"]
 # Attach the desired usb device on the VM startup, look at usb.md
-#     vb.customize "post-boot", ["controlvm", :id, "usbattach", "p=0x800b;v=0x8644;s=0x00038015f557c434;l=0x14130000"]
+     #vb.customize "post-boot", ["controlvm", :id, "usbattach", "p=0x800b;v=0x8644;s=0x00038015f557c434;l=0x14130000"] # macOS syntax
+     vb.customize "post-boot", ["controlvm", :id, "usbattach","{36fc9e60-c465-11cf-8056-444553540000}\\0012"] # Windows syntax
    end
 
 

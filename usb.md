@@ -58,9 +58,23 @@ vb.customize "post-boot", ["controlvm", :id, "usbattach", "p=0x800b;v=0x8644;s=0
 
 The last parameter is from `VBoxManage list usbhost` **Address** line.
 
+# Linux
+
+Untested, but should work as expected.
+
+
+# Windows
+
+VirtualBox and cmd where vagrant is called must be running with Administrator privilegies.
+
+On windows machine the device address can contain \ (slahes) and must be escaped with one more slash, for example if we have the device addres like this: `{36fc9e60-c465-11cf-8056-444553540000}\0012` we have to escape \0012 with \, the full correct vagrant config line will look like:
+```
+vb.customize "post-boot", ["controlvm", :id, "usbattach","{36fc9e60-c465-11cf-8056-444553540000}\\0012"]
+```
+
 # MacOS Difficulties
 
 NS_ERROR_FAILURE (0x80004005) Unable to create proxy device for USB
 
-Currently there are no known solution for it. Only run it with elevated privilegies (root)
+Currently there are no known solution for it (https://forums.virtualbox.org/viewtopic.php?f=8&t=107333). Only run it with elevated privilegies (root)
 So we have to run sudo `sudo /Applications/VirtualBox.app/Contents/MacOS/VirtualBox` and then `sudo vagrant up`
