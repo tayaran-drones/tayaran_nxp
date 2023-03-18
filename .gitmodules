@@ -24,3 +24,6 @@
 	path = src/offboard_ws/src/px4-offboard
 	url = https://github.com/Jaeyoung-Lim/px4-offboard.git
         ignore = dirty
+[submodule "src/offboard_ws/src/src/px4_ros_com"]
+	path = src/offboard_ws/src/src/px4_ros_com
+	url = https://github.com/PX4/px4_ros_com.git
