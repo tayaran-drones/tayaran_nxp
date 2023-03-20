@@ -5,7 +5,7 @@
 [submodule "src/PX4-Autopilot"]
 	path = src/PX4-Autopilot
 	url = https://github.com/PX4/PX4-Autopilot.git
-	branch = beta
+	branch = main
         ignore = dirty
 [submodule "src/microros_ws/src/micro_ros_setup"]
 	path = src/microros_ws/src/micro_ros_setup

@@ -9,4 +9,8 @@ fi
 
 source /opt/ros/foxy/setup.bash
 
+if [ -e /vagrant/src/install/local_setup.bash ]; then
+  source /vagrant/src/install/local_setup.bash
+fi
+
 "$@"
