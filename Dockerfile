@@ -18,11 +18,7 @@ RUN echo 'Acquire::Check-Date false;' | tee -a /etc/apt/apt.conf.d/10-nocheckval
     && echo "source /opt/ros/foxy/setup.bash" >> ~/.bashrc \
     && wget https://developer.arm.com/-/media/Files/downloads/gnu-rm/$ARM_ABI_VER/gcc-arm-none-eabi-$ARM_ABI_VER-x86_64-linux.tar.bz2 \
     && tar xjf gcc-arm-none-eabi-$ARM_ABI_VER-x86_64-linux.tar.bz2 -C /usr/share/ \
-    && ln -s /usr/share/gcc-arm-none-eabi-$ARM_ABI_VER/bin/arm-none-eabi-gcc /usr/bin/arm-none-eabi-gcc \
-    && ln -s /usr/share/gcc-arm-none-eabi-$ARM_ABI_VER/bin/arm-none-eabi-g++ /usr/bin/arm-none-eabi-g++ \
-    && ln -s /usr/share/gcc-arm-none-eabi-$ARM_ABI_VER/bin/arm-none-eabi-gdb /usr/bin/arm-none-eabi-gdb \
-    && ln -s /usr/share/gcc-arm-none-eabi-$ARM_ABI_VER/bin/arm-none-eabi-size /usr/bin/arm-none-eabi-size \
-    && ln -s /usr/share/gcc-arm-none-eabi-$ARM_ABI_VER/bin/arm-none-eabi-objcopy /usr/bin/arm-none-eabi-objcopy
+    && ln -sf /usr/share/gcc-arm-none-eabi-10.3-2021.10/bin/arm-none-eabi-* /usr/bin/
 
 WORKDIR /src/app
 
