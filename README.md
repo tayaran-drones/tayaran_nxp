@@ -13,11 +13,19 @@
 `vagrant ssh` | log in to with `vagrant` as both username and password
 
 ## Gazebo Simulations
+### Method 1 - Dynamic Simulation
 
 [https://docs.px4.io/v1.12/en/simulation/gazebo_vehicles.html](https://docs.px4.io/v1.12/en/simulation/gazebo_vehicles.html)
 
 Go inside docker container using `docker attach px4` and run
 `make px4_sitl gazebo_solo` for Quadrotor
+
+### Method 2 - Static Simulation
+
+Go inside test_pkg, source your bash and run the following:
+```
+ros2 run test_pkg drone_launch.py
+```
 
 ## Testing
 
