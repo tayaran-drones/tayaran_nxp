@@ -149,3 +149,8 @@ git submodule deinit -f .
 # checkout again
 git submodule update --init --recursive
 ```
+
+## Import Solidworks CAD into Gazebo
+> Install the SW2URDF Add-in to Solidworks. See: http://wiki.ros.org/sw_urdf_exporter
+> Generate URDF of the model using the Add-in. Follow this tutorial: http://wiki.ros.org/sw_urdf_exporter/Tutorials/Export%20an%20Assembly
+> Using drone_launch.py as a template: select the gazebo world you want from its collection (see: https://github.com/leonhartyao/gazebo_models_worlds_collection) and add your urdf file. 
