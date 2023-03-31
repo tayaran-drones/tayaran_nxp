@@ -24,7 +24,7 @@ Go inside docker container using `docker attach px4` and run
 
 Go inside test_pkg, source your bash and run the following:
 ```
-ros2 run test_pkg drone_launch.py
+ros2 launch test_pkg drone_launch.py
 ```
 
 ## Testing
