@@ -1,0 +1,312 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- This URDF was automatically created by SolidWorks to URDF Exporter! Originally created by Stephen Brawner (brawner@gmail.com) 
+     Commit Version: 1.6.0-4-g7f85cfe  Build Version: 1.6.7995.38578
+     For more information, please see http://wiki.ros.org/sw_urdf_exporter -->
+<robot
+  name="Quadcopter2">
+  <link
+    name="base_link">
+    <inertial>
+      <origin
+        xyz="0.13640905917034 -0.217222436490946 0.123060448114209"
+        rpy="0 0 0" />
+      <mass
+        value="0.0894586534757514" />
+      <inertia
+        ixx="0.000162149402298952"
+        ixy="-1.53380157496662E-06"
+        ixz="6.88874830819228E-08"
+        iyy="0.000158088501978041"
+        iyz="6.69606696754448E-08"
+        izz="0.00021865472313511" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="ros_ws/src/test_pkg/Quadcopter2/meshes/base_link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="ros_ws/src/test_pkg/Quadcopter2/meshes/base_link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <link
+    name="Legs_Link">
+    <inertial>
+      <origin
+        xyz="0.0477118456577427 0.00750000000000001 0.0428943381863407"
+        rpy="0 0 0" />
+      <mass
+        value="0.0987841599646559" />
+      <inertia
+        ixx="0.000280540963508419"
+        ixy="3.16370631509814E-19"
+        ixz="1.22707849475237E-19"
+        iyy="0.000280540963508419"
+        iyz="-4.06575814682064E-20"
+        izz="0.000165340081126289" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="ros_ws/src/test_pkg/Quadcopter2/meshes/Legs_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="ros_ws/src/test_pkg/Quadcopter2/meshes/Legs_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Leg"
+    type="fixed">
+    <origin
+      xyz="0.143886210208607 -0.169532540817505 0.0836298674340286"
+      rpy="3.14159265358979 0 -1.5707963267949" />
+    <parent
+      link="base_link" />
+    <child
+      link="Legs_Link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="Arms_Link">
+    <inertial>
+      <origin
+        xyz="0.251499999996342 0.0015222573280998 1.1002115885006E-11"
+        rpy="0 0 0" />
+      <mass
+        value="0.084599580811402" />
+      <inertia
+        ixx="0.000193767490142072"
+        ixy="9.11254235424197E-19"
+        ixz="5.27925816162523E-18"
+        iyy="0.00036744469350659"
+        iyz="1.0498179287829E-18"
+        izz="0.000193767490142072" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="ros_ws/src/test_pkg/Quadcopter2/meshes/Arms_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="1 1 1 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="ros_ws/src/test_pkg/Quadcopter2/meshes/Arms_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Arm"
+    type="fixed">
+    <origin
+      xyz="0.136386210201276 -0.468744386475247 0.123636460553521"
+      rpy="1.5707963267949 0 1.5707963267949" />
+    <parent
+      link="base_link" />
+    <child
+      link="Arms_Link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="ElectArm_Link">
+    <inertial>
+      <origin
+        xyz="0.165923424713826 0.0274672026801921 -0.000194951075126848"
+        rpy="0 0 0" />
+      <mass
+        value="0.1215806049268" />
+      <inertia
+        ixx="1.86279295691974E-05"
+        ixy="-8.74727003474797E-11"
+        ixz="5.96945738527189E-07"
+        iyy="2.8059956083601E-05"
+        iyz="-3.79565857036865E-10"
+        izz="1.23499945145109E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="ros_ws/src/test_pkg/Quadcopter2/meshes/ElectArm_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.0980392156862745 0.0980392156862745 0.0980392156862745 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="ros_ws/src/test_pkg/Quadcopter2/meshes/ElectArm_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ElectronicsArm"
+    type="fixed">
+    <origin
+      xyz="0.0857166327680799 -0.01 -0.000325177758569134"
+      rpy="0 0 0" />
+    <parent
+      link="Arms_Link" />
+    <child
+      link="ElectArm_Link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="ElecBody_Link">
+    <inertial>
+      <origin
+        xyz="-0.000789905685977962 -0.0574146963325876 0.00201061146370812"
+        rpy="0 0 0" />
+      <mass
+        value="0.177865321801127" />
+      <inertia
+        ixx="0.000138523440207294"
+        ixy="-1.95193148165041E-07"
+        ixz="8.52017468279674E-07"
+        iyy="0.000162735416196156"
+        iyz="2.11257576480694E-06"
+        izz="4.22168764810173E-05" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="ros_ws/src/test_pkg/Quadcopter2/meshes/ElecBody_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="package://Quadcopter2/meshes/ElecBody_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="ElectronicsBody"
+    type="fixed">
+    <origin
+      xyz="0.136386210208607 -0.21724438799756 0.155136460553521"
+      rpy="1.5707963267949 0 0.785398163397448" />
+    <parent
+      link="base_link" />
+    <child
+      link="ElecBody_Link" />
+    <axis
+      xyz="0 0 0" />
+  </joint>
+  <link
+    name="Screws_Link">
+    <inertial>
+      <origin
+        xyz="0.0710919486582187 -0.00540785192354507 0.0652367237857738"
+        rpy="0 0 0" />
+      <mass
+        value="0.0014858673002492" />
+      <inertia
+        ixx="1.82030965171414E-08"
+        ixy="-1.3136473825989E-10"
+        ixz="1.75073141407986E-12"
+        iyy="1.82025914228029E-08"
+        iyz="2.50246951821774E-12"
+        izz="4.98734607350765E-09" />
+    </inertial>
+    <visual>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="ros_ws/src/test_pkg/Quadcopter2/meshes/Screws_Link.STL" />
+      </geometry>
+      <material
+        name="">
+        <color
+          rgba="0.792156862745098 0.819607843137255 0.933333333333333 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin
+        xyz="0 0 0"
+        rpy="0 0 0" />
+      <geometry>
+        <mesh
+          filename="ros_ws/src/test_pkg/Quadcopter2/meshes/Screws_Link.STL" />
+      </geometry>
+    </collision>
+  </link>
+  <joint
+    name="Screws"
+    type="fixed">
+    <origin
+      xyz="0.0663862102086067 -0.210744386475248 0.0772988670677804"
+      rpy="0 0 0" />
+    <parent
+      link="base_link" />
+    <child
+      link="Screws_Link" />
+    <axis
+      xyz="0 0 1" />
+  </joint>
+</robot>
